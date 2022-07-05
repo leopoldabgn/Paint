@@ -1,4 +1,4 @@
-package paint;
+package view;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -11,6 +11,8 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+
+import model.Position;
 
 public class ImageContainer extends JPanel
 {

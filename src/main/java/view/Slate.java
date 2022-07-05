@@ -1,4 +1,4 @@
-package paint;
+package view;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -19,6 +19,9 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
+
+import model.Point;
+import model.Position;
 
 public class Slate extends JPanel
 {
@@ -205,11 +208,13 @@ public class Slate extends JPanel
 	{
 		Point p = new Point(getBrushColor(), getBrushSize(), getBrushForm(), new Position(e.getX(), e.getY()));
 		if(draw.contains(p))
-			System.out.println("EXISTE DEJA");
+		{
+			//System.out.println("EXISTE DEJA");
+		}
 		else
 		{
 			draw.add(p);
-			System.out.println("NOUVEAU POINT");
+			//System.out.println("NOUVEAU POINT");
 			repaint();
 		}
 	}

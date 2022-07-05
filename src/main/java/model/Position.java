@@ -1,4 +1,4 @@
-package paint;
+package model;
 
 public class Position 
 {

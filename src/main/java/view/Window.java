@@ -1,4 +1,4 @@
-package paint;
+package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -28,6 +28,8 @@ public class Window extends JFrame
 {
 	private static final long serialVersionUID = 1L;
 	
+	public static final String RESOURCES_FOLDER = "src/resources/";
+
 	private Slate slate;
 	
 	private JMenuBar menuBar = new JMenuBar();
@@ -71,8 +73,8 @@ public class Window extends JFrame
 	
 	private ButtonGroup toolBarGroup = new ButtonGroup();
 	
-	private JRadioButton brush = new JRadioButton(new ImageIcon(getClass().getClassLoader().getResource("brushIcon2.png"))),
-			selection = new JRadioButton(new ImageIcon(getClass().getClassLoader().getResource("selection.png")));
+	private JRadioButton brush = new JRadioButton(new ImageIcon(RESOURCES_FOLDER+"brushIcon2.png")),
+			selection = new JRadioButton(new ImageIcon(RESOURCES_FOLDER+"selection.png"));
 	
 	private JRadioButton lastButton = brush;
 	
@@ -240,44 +242,42 @@ public class Window extends JFrame
 		
 	}
 	
-	  class ToolBarListener implements ActionListener{
-
-		    public void actionPerformed(ActionEvent e) {
-
-		      if(e.getSource().getClass().getName().equals("javax.swing.JRadioButtonMenuItem"));
-		      else{
-		        if(e.getSource() == brush){
-		          toolsButton[0].doClick();
-		        }
-		        else if(e.getSource() == selection){
-		          toolsButton[1].doClick();
-		        }
-		        
-		        lastButton.setBackground(null);
-		        lastButton = (JRadioButton) e.getSource();
-		        lastButton.setBackground(selectColor);
-		      }
-		    }    
-		  }
+	class ToolBarListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+			if(e.getSource().getClass().getName().equals("javax.swing.JRadioButtonMenuItem"));
+			else
+			{
+				if(e.getSource() == brush)
+					toolsButton[0].doClick();
+				else if(e.getSource() == selection)
+					toolsButton[1].doClick();
+				lastButton.setBackground(null);
+				lastButton = (JRadioButton) e.getSource();
+				lastButton.setBackground(selectColor);
+			}
+		}    
+	}
 	  
-	  public void setCursorState(boolean bool)
-	  {
-		  if(bool)
-			  slate.setCursor(null);
-		  else
-			  slate.setCursor(slate.getToolkit().createCustomCursor(new BufferedImage(3, 3, 
-					    BufferedImage.TYPE_INT_ARGB), new Point(0, 0), null));
+	public void setCursorState(boolean bool)
+	{
+		if(bool)
+			slate.setCursor(null);
+		else
+			slate.setCursor(slate.getToolkit().createCustomCursor(new BufferedImage(3, 3, 
+					    			BufferedImage.TYPE_INT_ARGB), new Point(0, 0), null));
 	  }
 	  
-	  public Slate getSlate()
-	  {
-		  return slate;
-	  }
+	public Slate getSlate()
+  	{
+		return slate;
+	}
 	  
-	  public JToolBar getToolBar()
-	  {
-		  return toolBar;
-	  }
+	public JToolBar getToolBar()
+	{
+		return toolBar;
+	}
 	  
 }
 

@@ -1,4 +1,4 @@
-package paint;
+package launcher;
 
 import java.awt.Image;
 import java.io.File;
@@ -6,10 +6,12 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class Main 
+import view.Window;
+
+public class Launcher
 {
 
-	public Main(String[] args)
+	public Launcher(String[] args)
 	{
 		Window win = new Window(600,600);
 		if(args.length == 0)
@@ -24,7 +26,7 @@ public class Main
 	
 	public static void main(String[] args) 
 	{
-		new Main(args);
+		new Launcher(args);
 	}
 	
 }
