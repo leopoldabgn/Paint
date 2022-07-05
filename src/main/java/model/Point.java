@@ -3,9 +3,7 @@ package model;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import javax.swing.ImageIcon;
-
-import static view.Window.RESOURCES_FOLDER;
+import view.Window;
 
 public class Point 
 {
@@ -29,7 +27,7 @@ public class Point
 		else if(form == 1)
 			g.fillRect(position.getX()-size/2, position.getY()-size/2, size, size);
 		else
-			g.drawImage(new ImageIcon(RESOURCES_FOLDER+"selection.jpg").getImage(),position.getX()-size/2, position.getY()-size/2,null);
+			g.drawImage(Window.getImage("selection.jpg"),position.getX()-size/2, position.getY()-size/2,null);
 	}
 	
 	public Color getColor() {

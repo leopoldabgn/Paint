@@ -3,13 +3,16 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -28,7 +31,7 @@ public class Window extends JFrame
 {
 	private static final long serialVersionUID = 1L;
 	
-	public static final String RESOURCES_FOLDER = "src/resources/";
+	public static final String RESOURCES_FOLDER = ""; // "src/main/resources/";
 
 	private Slate slate;
 	
@@ -73,8 +76,8 @@ public class Window extends JFrame
 	
 	private ButtonGroup toolBarGroup = new ButtonGroup();
 	
-	private JRadioButton brush = new JRadioButton(new ImageIcon(RESOURCES_FOLDER+"brushIcon2.png")),
-			selection = new JRadioButton(new ImageIcon(RESOURCES_FOLDER+"selection.png"));
+	private JRadioButton brush = new JRadioButton(new ImageIcon(getImage("brushIcon2.png"))),
+			selection = new JRadioButton(new ImageIcon(getImage("selection.png")));
 	
 	private JRadioButton lastButton = brush;
 	
@@ -278,6 +281,12 @@ public class Window extends JFrame
 	{
 		return toolBar;
 	}
-	  
+	
+	public static Image getImage(final String pathAndFileName)
+	{
+		final URL url = Thread.currentThread().getContextClassLoader().getResource(pathAndFileName);
+		return Toolkit.getDefaultToolkit().getImage(url);
+	}
+
 }
 
