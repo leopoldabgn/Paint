@@ -26,7 +26,6 @@ public class ImageContainer extends JPanel
 	
 	public ImageContainer(Slate slate, String url)
 	{
-		super();
 		this.img = new ImageIcon(url).getImage();
 		if(img == null)
 			return;

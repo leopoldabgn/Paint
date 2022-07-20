@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -29,27 +31,25 @@ public class Slate extends JPanel
 	
 	private Window win;
 	private JRadioButtonMenuItem[] formButton, colorButton, sizeButton, toolsButton;
-	private List<List<Point>> lastDraw = new ArrayList<List<Point>>();
 	private List<Point> draw = new ArrayList<Point>();
 	private Point cursor;
 	private int[] oldSelection = new int[2], selection = new int[2];
 	private Image lastSlate;
-	private List<Image> image = new ArrayList<>();
-	private List<Position> imgPos = new ArrayList<>();
 	private ImageContainer imgC;
 	private int spaceCoin = 6;
 	private boolean coinPressed = false;
 	
+	private Stack<Object> objects = new Stack<Object>(); // ImageContainer, Point, Rectangle...
+	private Stack<Object> redoObjects = new Stack<Object>();
+
 	public Slate(Window win, Dimension dim, JRadioButtonMenuItem[] formButton, JRadioButtonMenuItem[] colorButton, JRadioButtonMenuItem[] sizeButton, JRadioButtonMenuItem[] toolsButton)
 	{
-		super();
 		//lastSlate = new ImageIcon("lastSlate.jpg").getImage();
 		this.setLayout(null);
 		this.formButton = formButton;
 		this.colorButton = colorButton;
 		this.sizeButton = sizeButton;
 		this.toolsButton = toolsButton;
-		this.lastDraw.add(new ArrayList<Point>());
 		this.cursor = new Point(getBrushColor(), getBrushSize(), getBrushForm(), new Position(-100,-100));
 		
 		
@@ -81,13 +81,9 @@ public class Slate extends JPanel
 			{
 				if(getBrushButtonState())
 				{
-					if(lastDraw.size() > 0 && draw.size() > 0)
-					{
-						if(lastDraw.get(lastDraw.size()-1) != draw)
-						{
-							lastDraw.add(new ArrayList<Point>(draw));
-						}
-					}
+					objects.push(draw);
+					draw = new ArrayList<Point>();
+					redoObjects.clear();
 				}
 				
 				if(coinPressed)
@@ -95,6 +91,7 @@ public class Slate extends JPanel
 					coinPressed = false;
 					win.setCursorState(true);
 				}
+				repaint();
 			}
 
 			@Override
@@ -154,9 +151,8 @@ public class Slate extends JPanel
 				{
 					if(imgC != null)
 					{
-						image.add(imgC.getImage());
-						imgPos.add(imgC.getPosition());
-						imgC = null;
+						objects.push(imgC);
+						redoObjects.clear();
 						removeAll();
 						repaint();
 					}
@@ -172,24 +168,34 @@ public class Slate extends JPanel
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		int index=0;
-		
+
+		// Il vaut mieux faire un fichier special et enregistrer la liste object.
 		if(lastSlate != null)
 			g.drawImage(lastSlate, 0, 0, lastSlate.getWidth(null), lastSlate.getHeight(null), null);
-		
-		if(image != null)
+
+		for(Object obj : objects)
 		{
-			for(Image img : image)
-			{
-				g.drawImage(img, imgPos.get(index).getX(), imgPos.get(index).getY(), img.getWidth(null), img.getHeight(null), null);
-				index++;
+			if(obj instanceof Rectangle) { // When you delete a zone
+
+			}
+			else if(obj instanceof ImageContainer) {
+				ImageContainer imgCo = (ImageContainer)obj;
+				g.drawImage(imgCo.getImage(), imgCo.getPosition().getX(),
+							imgCo.getPosition().getY(), imgCo.getImage().getWidth(null),
+							imgCo.getImage().getHeight(null), null);
+			}
+			else if(obj instanceof ArrayList) {
+				//@SuppressWarnings(“unchecked”)
+				ArrayList<Point> points = (ArrayList<Point>)obj;
+				for(Point p : points) {
+					p.paint(g);
+				}
 			}
 		}
 
-		
 		for(Point d : draw)
 			d.paint(g);
-		
+
 		if(getSelectionButtonState())
 		{
 			float opacity = 0.5f;
@@ -258,28 +264,15 @@ public class Slate extends JPanel
 	
 	public void undo()
 	{
-		try {
-		if(lastDraw.size() > 0 && draw.size() > 0)
-		{
-			if(lastDraw.get(lastDraw.size()-2) != draw)
-			{
-				draw = new ArrayList<Point>(lastDraw.get(lastDraw.size()-2));
-				lastDraw.remove(lastDraw.size()-2);
-			}
-		}
-
+		if(!objects.empty())
+			redoObjects.push(objects.pop());
 		repaint();
-		}
-		catch(Exception e1)
-		{
-			
-		}
 	}
 	
 	public void redo()
 	{
-		
-		
+		if(!redoObjects.empty())
+			objects.push(redoObjects.pop());
 		repaint();
 	}
 	
@@ -362,9 +355,9 @@ public class Slate extends JPanel
 	
 	public void clean()
 	{
+		objects.clear();
+		redoObjects.clear();
 		draw.clear();
-		lastDraw.clear();
-		image = null;
 		lastSlate = null;
 		(new File("lastSlate.jpg")).delete();
 		repaint();
@@ -393,9 +386,10 @@ public class Slate extends JPanel
 		return win;
 	}
 	
-	public void addImageAt(Image img, int x, int y)
+	public void addImageAt(String path, int x, int y)
 	{
-		image.add(img);
-		imgPos.add(new Position(x, y));
+		ImageContainer imgCo = new ImageContainer(this, path);
+		imgCo.setLocation(x, y);
+		objects.add(imgCo);
 	}
 }

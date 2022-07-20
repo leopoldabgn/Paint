@@ -18,7 +18,7 @@ public class Launcher
 			return;
 		try {
 			Image img = ImageIO.read(new File(args[0]));
-			win.getSlate().addImageAt(img, 0, 0);
+			win.getSlate().addImageAt(args[0], 0, 0);
 			win.getSlate().setSize(img.getWidth(null), img.getHeight(null));
 			win.getSlate().revalidate();
 		} catch (IOException e) {}
