@@ -9,7 +9,10 @@ You can clone the repository and launch it with you IDE to compile it. It's a ma
 mvn package
 java -jar target/paint*.jar
 ```
-
+Or, launch the jar file :
+```
+java -jar paint*.jar
+```
 ### Last release
 You can also download the last release. It's just the jar file :
 ```
