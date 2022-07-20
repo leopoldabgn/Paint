@@ -143,4 +143,17 @@ public class ImageContainer extends JPanel
 	    return outputImage;
     }
 	
+	// Put image on the top-left corner.
+	public void setLocationForImage(int x, int y) {
+		setLocation(x - getWidthFactor(), y - getHeightFactor());
+	}
+
+	public int getWidthFactor() {
+		return k;
+	}
+
+	public int getHeightFactor() {
+		return s1;
+	}
+
 }

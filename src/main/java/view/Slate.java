@@ -389,7 +389,7 @@ public class Slate extends JPanel
 	public void addImageAt(String path, int x, int y)
 	{
 		ImageContainer imgCo = new ImageContainer(this, path);
-		imgCo.setLocation(x, y);
+		imgCo.setLocationForImage(x, y);
 		objects.add(imgCo);
 	}
 }
