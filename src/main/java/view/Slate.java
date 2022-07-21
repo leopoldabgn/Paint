@@ -71,9 +71,12 @@ public class Slate extends JPanel
 				{
 					oldSelection[0] = e.getX();
 					oldSelection[1] = e.getY();
+					selection[0] = e.getX();
+					selection[1] = e.getY();
 				}
 				else if(getBrushButtonState())
 					addPoint(e);
+				repaint();
 			}
 
 			@Override
@@ -157,6 +160,20 @@ public class Slate extends JPanel
 						repaint();
 					}
 				}
+				else if(e.getKeyCode() == KeyEvent.VK_DELETE)
+				{
+					if(selection[0] - oldSelection[0] > 0 &&
+					   selection[1] - oldSelection[1] > 0) {
+						addRectangle(Color.WHITE, new Position(oldSelection[0], oldSelection[1]),
+						new Dimension(selection[0] - oldSelection[0], selection[1] - oldSelection [1]));
+						selection[0] = 0;
+						selection[1] = 0;
+						oldSelection[0] = 0;
+						oldSelection[1] = 0;
+						revalidate();
+						repaint();
+					}
+				}
 			}
 			
 		});
@@ -175,8 +192,9 @@ public class Slate extends JPanel
 
 		for(Object obj : objects)
 		{
-			if(obj instanceof Rectangle) { // When you delete a zone
-
+			if(obj instanceof DeleteZone) { // When you delete a zone
+				g.setColor(((DeleteZone)obj).getColor());
+				((Graphics2D)g).fill(((DeleteZone)obj));
 			}
 			else if(obj instanceof ImageContainer) {
 				ImageContainer imgCo = (ImageContainer)obj;
@@ -210,6 +228,11 @@ public class Slate extends JPanel
 		this.requestFocus();
 	}
 	
+	public void addRectangle(Color color, Position pos, Dimension dim) {
+		DeleteZone zone = new DeleteZone(color, pos, dim);
+		objects.add(zone);
+	}
+
 	public void addPoint(MouseEvent e)
 	{
 		Point p = new Point(getBrushColor(), getBrushSize(), getBrushForm(), new Position(e.getX(), e.getY()));
