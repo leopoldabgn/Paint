@@ -1,7 +1,10 @@
 package model;
 
-public class Position 
+import java.io.Serializable;
+
+public class Position implements Serializable
 {
+	private static final long serialVersionUID = 6888272755517546218L;
 	private int x, y;
 	
 	public Position(int x, int y)

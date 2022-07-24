@@ -2,11 +2,14 @@ package model;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 
 import view.Window;
 
-public class Point 
+public class Point implements Serializable
 {
+	private static final long serialVersionUID = 6625357177711928539L;
+
 	private Color color;
 	private int size, form;
 	private Position position;

@@ -8,7 +8,12 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Base64;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
@@ -18,17 +23,20 @@ public class ImageContainer extends JPanel
 {
 	private static final long serialVersionUID = 1L;
 
-	private Image img;
-	private int[] initialPos = new int[] {0, 0};
-	private int[] initialSize = new int[] {0, 0};
+	private ImageIcon imgIcon;
+	//private String extension;
+	private transient int[] initialPos = new int[] {0, 0};
+	private transient int[] initialSize = new int[] {0, 0};
 	private int k = 4, s1 = 4;
 	private String zone;
 	
 	public ImageContainer(Slate slate, String url)
 	{
-		this.img = new ImageIcon(url).getImage();
+		this.imgIcon = new ImageIcon(url);
+		Image img = imgIcon.getImage();
 		if(img == null)
 			return;
+		//this.extension = getExtension(url);
 		this.setOpaque(false);
 		this.setBounds(slate.getWidth()/2 - img.getWidth(null)/2, slate.getHeight()/2 - img.getHeight(null)/2, 
 						img.getWidth(null), img.getHeight(null));
@@ -89,6 +97,7 @@ public class ImageContainer extends JPanel
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
+		Image img = imgIcon.getImage();
 		if(img == null)
 			return;
 		g.drawImage(img, s1, s1, this.getWidth()-2*s1, this.getHeight()-2*s1, null);
@@ -123,9 +132,9 @@ public class ImageContainer extends JPanel
 	
 	public BufferedImage getImage()
 	{
-		return resize(img, this.getWidth()-2*s1, this.getHeight()-2*s1);
+		return resize(imgIcon.getImage(), this.getWidth()-2*s1, this.getHeight()-2*s1);
 	}
-	
+
 	public Position getPosition()
 	{
 		return new Position(getX()+s1, getY()+s1);
@@ -143,6 +152,48 @@ public class ImageContainer extends JPanel
 	    return outputImage;
     }
 	
+	public static String getExtension(String path)
+	{
+		try {
+			return path.substring(path.lastIndexOf(".")+1).toLowerCase();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String getBase64() {
+		return encodeToString(getImage(), "jpg");
+	}
+
+	public static Image base64ToImage(String base64) {
+		try {
+			byte[] bytes = Base64.getDecoder().decode(base64);
+			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+			return ImageIO.read(bis);
+		}
+		catch(Exception e) {
+			return null;
+		}
+	}
+
+	public static String encodeToString(BufferedImage image, String type) {
+        String imageString = null;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        try {
+            ImageIO.write(image, type, bos);
+            byte[] imageBytes = bos.toByteArray();
+			
+            imageString = Base64.getEncoder().encodeToString(imageBytes);
+
+            bos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return imageString;
+    }
+
 	// Put image on the top-left corner.
 	public void setLocationForImage(int x, int y) {
 		setLocation(x - getWidthFactor(), y - getHeightFactor());

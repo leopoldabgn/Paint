@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -24,17 +22,18 @@ import javax.swing.JRadioButtonMenuItem;
 
 import model.Point;
 import model.Position;
+import model.SlateSaver;
 
 public class Slate extends JPanel
 {
 	private static final long serialVersionUID = 1L;
-	
+	private static final String LAST_SLATE_FILE_NAME = "last_slate.save";
+
 	private Window win;
 	private JRadioButtonMenuItem[] formButton, colorButton, sizeButton, toolsButton;
 	private List<Point> draw = new ArrayList<Point>();
 	private Point cursor;
 	private int[] oldSelection = new int[2], selection = new int[2];
-	private Image lastSlate;
 	private ImageContainer imgC;
 	private int spaceCoin = 6;
 	private boolean coinPressed = false;
@@ -178,6 +177,8 @@ public class Slate extends JPanel
 			
 		});
 		
+		this.load();
+
 		this.setFocusable(true);
 		this.requestFocus();
 	}
@@ -185,10 +186,6 @@ public class Slate extends JPanel
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-
-		// Il vaut mieux faire un fichier special et enregistrer la liste object.
-		if(lastSlate != null)
-			g.drawImage(lastSlate, 0, 0, lastSlate.getWidth(null), lastSlate.getHeight(null), null);
 
 		for(Object obj : objects)
 		{
@@ -381,7 +378,6 @@ public class Slate extends JPanel
 		objects.clear();
 		redoObjects.clear();
 		draw.clear();
-		lastSlate = null;
 		(new File("lastSlate.jpg")).delete();
 		repaint();
 	}
@@ -415,4 +411,55 @@ public class Slate extends JPanel
 		imgCo.setLocationForImage(x, y);
 		objects.add(imgCo);
 	}
+
+	public void save() {
+		save(LAST_SLATE_FILE_NAME);
+	}
+
+	public void save(String path) {
+		SlateSaver ss = new SlateSaver(this);
+		ss.save(path);
+	}
+
+	public boolean load() {
+		return load(LAST_SLATE_FILE_NAME);
+	}
+
+	public boolean load(String path) {
+		try {
+			SlateSaver ss = SlateSaver.load(path);
+			this.objects = ss.getObjects();
+			this.setSize(ss.getSize());
+			revalidate();
+			repaint();
+			return true;
+		} catch(Exception e) {
+			return false;
+		}
+	}
+
+	public static File openFileChooser(int fileSelectionMode)
+	{
+		JFileChooser choice = new JFileChooser();
+		choice.setFileSelectionMode(fileSelectionMode);
+		int var = choice.showOpenDialog(null);
+		if(var == JFileChooser.APPROVE_OPTION)
+			return choice.getSelectedFile();
+		return null;
+	}
+
+	public static File openFile()
+	{
+		return openFileChooser(JFileChooser.FILES_ONLY);
+	}
+
+	public static File openFolder()
+	{
+		return openFileChooser(JFileChooser.DIRECTORIES_ONLY);
+	}
+
+	public Stack<Object> getObjects() {
+		return objects;
+	}
+
 }

@@ -43,7 +43,9 @@ public class Window extends JFrame
 			size = new JMenu("Brush size"),
 			tools = new JMenu("Tools");
 	
-	private JMenuItem openFile = new JMenuItem("Open File..."),
+	private JMenuItem openFile = new JMenuItem("Open file..."),
+			openImage = new JMenuItem("Open image..."),
+			saveFile = new JMenuItem("Save as..."),
 			clean = new JMenuItem("Clean"),
 			quit = new JMenuItem("Quit"),
 			undo = new JMenuItem("Undo"),
@@ -155,7 +157,9 @@ public class Window extends JFrame
 		menuBar.add(edit);
 		menuBar.add(tools);
 		
+		file.add(openImage);
 		file.add(openFile);
+		file.add(saveFile);
 		file.add(clean);
 		file.add(screenshot);
 		file.add(quit);
@@ -211,9 +215,21 @@ public class Window extends JFrame
 			}
 		});
 		
-		openFile.addActionListener(new ActionListener() {
+		openImage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				slate.addImage();
+			}
+		});
+
+		openFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+
+		saveFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO
 			}
 		});
 		
@@ -231,14 +247,15 @@ public class Window extends JFrame
 		
 		quit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				slate.saveImage("lastSlate.jpg");
+				//slate.saveImage("lastSlate.jpg");
 				System.exit(0);
 			}
 		});
 		
         this.addWindowListener(new WindowAdapter(){  
             public void windowClosing(WindowEvent e) {  
-				slate.saveImage("lastSlate.jpg");
+				//slate.saveImage("lastSlate.jpg");
+				slate.save();
 				System.exit(0);
             }  
         });  
