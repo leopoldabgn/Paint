@@ -12,8 +12,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
+import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
@@ -44,8 +47,9 @@ public class Window extends JFrame
 			tools = new JMenu("Tools");
 	
 	private JMenuItem openFile = new JMenuItem("Open file..."),
-			openImage = new JMenuItem("Open image..."),
-			saveFile = new JMenuItem("Save as..."),
+			addImage = new JMenuItem("Add image..."),
+			saveAs = new JMenuItem("Save as..."),
+			export = new JMenuItem("Export JPG..."),
 			clean = new JMenuItem("Clean"),
 			quit = new JMenuItem("Quit"),
 			undo = new JMenuItem("Undo"),
@@ -157,9 +161,11 @@ public class Window extends JFrame
 		menuBar.add(edit);
 		menuBar.add(tools);
 		
-		file.add(openImage);
+		file.add(addImage);
 		file.add(openFile);
-		file.add(saveFile);
+		file.add(saveAs);
+		file.add(export);
+		
 		file.add(clean);
 		file.add(screenshot);
 		file.add(quit);
@@ -215,24 +221,67 @@ public class Window extends JFrame
 			}
 		});
 		
-		openImage.addActionListener(new ActionListener() {
+		addImage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				slate.addImage();
 			}
 		});
 
+		// it can be paint save or an image
 		openFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				String[] imgExt = new String[] {"jpg", "jpeg", "png"};
+				File file = Slate.openFile();
+				if(file != null && file.exists()) {
+					String ext = ImageContainer.getExtension(file.getAbsolutePath());
+					if(ext != null) {
+						for(String ext2 : imgExt) {
+							if(ext2.equalsIgnoreCase(ext)) {
+								try {
+									Image img = ImageIO.read(file);
+									slate.clean();
+									slate.addImageAt(file.getAbsolutePath(), 0, 0);
+									slate.setSize(img.getWidth(null), img.getHeight(null));
+								} catch (IOException e2) {}
+								break;
+							}
+						}
+
+						if(ext.equalsIgnoreCase("save"))
+							slate.load(file.getAbsolutePath());
+						
+						slate.revalidate();
+						slate.repaint();
+					}
+				}
 			}
 		});
 
-		saveFile.addActionListener(new ActionListener() {
+		saveAs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO
+				File saveAs = Slate.openFile();
+				if(saveAs != null) {
+					String path = saveAs.getAbsolutePath();
+					String ext = ImageContainer.getExtension(saveAs.getName());
+					if(ext == null || !ext.equalsIgnoreCase("save"))
+						path += ".save";
+					slate.save(path);
+				}
 			}
 		});
 		
+		export.addActionListener(e -> {
+			File exportTo = Slate.openFile();
+			if(exportTo != null) {
+				String path = exportTo.getAbsolutePath();
+				String ext = ImageContainer.getExtension(exportTo.getName());
+				if(ext == null || !ext.equalsIgnoreCase("jpg"))
+					path += ".jpg";
+				System.out.println(path);
+				slate.exportToJPG(path);
+			}
+		});
+
 		clean.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				slate.clean();
@@ -241,7 +290,7 @@ public class Window extends JFrame
 		
 		screenshot.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				slate.saveImage("Screenshot.jpg");
+				slate.exportToJPG("Screenshot.jpg");
 			}
 		});
 		

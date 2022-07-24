@@ -28,3 +28,5 @@ lastSlate.*
 target/
 Screenshot.jpg
 last_slate.save
+*.save
+*.jpg

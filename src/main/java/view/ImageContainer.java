@@ -156,9 +156,7 @@ public class ImageContainer extends JPanel
 	{
 		try {
 			return path.substring(path.lastIndexOf(".")+1).toLowerCase();
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
+		}catch(Exception e) {}
 		return null;
 	}
 

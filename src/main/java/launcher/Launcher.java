@@ -21,6 +21,7 @@ public class Launcher
 			win.getSlate().addImageAt(args[0], 0, 0);
 			win.getSlate().setSize(img.getWidth(null), img.getHeight(null));
 			win.getSlate().revalidate();
+			win.getSlate().repaint();
 		} catch (IOException e) {}
 	}
 	

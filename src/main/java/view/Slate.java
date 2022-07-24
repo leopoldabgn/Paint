@@ -362,23 +362,24 @@ public class Slate extends JPanel
 		return img;
 	}
 	
-	public void saveImage(String name)
-	{
-		File output = new File(name);
+	public boolean exportToJPG(String path) {
+		File output = new File(path);
 		BufferedImage img = getScreenshot();
 		try {
 			ImageIO.write(img, "JPG", output);
+			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
-	
+
 	public void clean()
 	{
 		objects.clear();
 		redoObjects.clear();
 		draw.clear();
-		(new File("lastSlate.jpg")).delete();
+		revalidate();
 		repaint();
 	}
 	
@@ -456,6 +457,10 @@ public class Slate extends JPanel
 	public static File openFolder()
 	{
 		return openFileChooser(JFileChooser.DIRECTORIES_ONLY);
+	}
+
+	public static File openFileFolder() {
+		return openFileChooser(JFileChooser.FILES_AND_DIRECTORIES);
 	}
 
 	public Stack<Object> getObjects() {
