@@ -97,7 +97,7 @@ public class Window extends JFrame
 	
 	public Window(int w, int h)
 	{
-		this.setTitle("Paint v1.0");
+		this.setTitle("Paint v2.0");
 		this.setMinimumSize(new Dimension(w, h));
 		this.setResizable(true);
 		this.setLocationRelativeTo(null);
@@ -296,14 +296,15 @@ public class Window extends JFrame
 		
 		quit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//slate.saveImage("lastSlate.jpg");
+				slate.save();
+				Window.this.dispose();
 				System.exit(0);
 			}
 		});
 		
         this.addWindowListener(new WindowAdapter(){  
             public void windowClosing(WindowEvent e) {  
-				//slate.saveImage("lastSlate.jpg");
+				System.out.println("holaaa");
 				slate.save();
 				System.exit(0);
             }  
